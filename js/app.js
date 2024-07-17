@@ -67,21 +67,21 @@ function buildDropdown() {
     let cityDropdown = document.getElementById("cityDropdown");
     let currentEvents = smEvents;
 
-    let distinctCities = [... new Set(currentEvents.map((event)=> event.city))]
+    cityDropdown.innerHTML = `<li><a class="dropdown-item" onclick="getEvents(this)" data-city="all">All</a></li>`;
+    let distinctCities = [... new Set(currentEvents.map((event)=> event.city))];
     for(let i = 0; i < distinctCities.length; i++) {
-        let menuItem = `<li><a class="dropdown-item" href="#">${distinctCities[i]}</a></li>`;
+        menuItem = `<li><a class="dropdown-item" onclick="getEvents(this)" data-city="${distinctCities[i]}">${distinctCities[i]}</a></li>`;
         cityDropdown.innerHTML += menuItem;
     }
 }
-displayStats(smEvents)
-function displayStats(events) {
+function displayStats(events, selected) {
     let total = 0;
     let average = 0;
     let most = 0;
     let least = -1;
     let currentAttendance = 0;
     let currentHighest = 0;
-    let currentLowest = 9999 ** 9999;
+    let currentLowest = events[0].attendance;
 
     for(let i = 0; i<events.length; i ++){
         currentAttendance = events[i].attendance;
@@ -97,7 +97,18 @@ function displayStats(events) {
     }
     average = total / events.length;
     document.getElementById("total").innerHTML = total.toLocaleString();
-    document.getElementById("average").innerHTML = Math.trunc(average).toLocaleString();
+    document.getElementById("average").innerHTML = Math.round(average).toLocaleString();
     document.getElementById("most").innerHTML = most.toLocaleString();
     document.getElementById("least").innerHTML = least.toLocaleString();
+    document.getElementById("statsHeader").innerText = `Stats For ${selected} Events`
+}
+function getEvents(element) {
+  let city = element.getAttribute("data-city");
+  let filteredEvents = smEvents;
+  if (city == 'all') {
+    filteredEvents = smEvents
+  } else {
+    filteredEvents = smEvents.filter(c => c.city == city);
+  }
+  displayStats(filteredEvents, city);
 }
