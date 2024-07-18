@@ -32,7 +32,7 @@ nav {
     background-color: var(--sm-theme-800);
 }
 .nav-logo {
-    height: 2.4rem;
+    height: 2rem;
 }
 .app-logo {
     max-width: 450px;
