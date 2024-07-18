@@ -64,13 +64,12 @@ const smEvents = [
   },
 ];
 buildDropdown();
-displayStats(JSON.parse(localStorage.getItem("eventData")) || smEvents, "All");
 function buildDropdown() {
   let cityDropdown = document.getElementById("cityDropdown");
   let currentEvents = JSON.parse(localStorage.getItem("eventData")) || smEvents;
   if (currentEvents == null) {
     currentEvents = smEvents;
-    localStorage.setItem("eventData", JSON.stringify(currentEvents))
+    localStorage.setItem("eventData", JSON.stringify(currentEvents));
   }
 
   cityDropdown.innerHTML = `<li><a class="dropdown-item" onclick="getEvents(this)" data-city="All">All</a></li>`;
@@ -79,6 +78,8 @@ function buildDropdown() {
     menuItem = `<li><a class="dropdown-item" onclick="getEvents(this)" data-city="${distinctCities[i]}">${distinctCities[i]}</a></li>`;
     cityDropdown.innerHTML += menuItem;
   }
+  displayStats(currentEvents);
+  displayData(currentEvents);
 }
 function displayStats(events, selected) {
   let total = 0;
@@ -118,9 +119,10 @@ function getEvents(element) {
   if (city == "All") {
     filteredEvents = currentEvents;
   } else {
-    filteredEvents = currentEvents.filter(c => c.city == city);
+    filteredEvents = currentEvents.filter((c) => c.city == city);
   }
   displayStats(filteredEvents, city);
+  displayData(filteredEvents);
 }
 function saveEventData() {
   let currentEvents = JSON.parse(localStorage.getItem("eventData")) || smEvents;
@@ -128,8 +130,7 @@ function saveEventData() {
   let stateSelector = document.getElementById("event-state");
   eventObj["event"] = document.getElementById("event-name").value;
   eventObj["city"] = document.getElementById("event-city").value;
-  eventObj["state"] =
-    stateSelector.options[stateSelector.selectedIndex].text;
+  eventObj["state"] = stateSelector.options[stateSelector.selectedIndex].text;
   eventObj["attendance"] = parseInt(
     document.getElementById("event-attendance").value
   );
@@ -140,10 +141,21 @@ function saveEventData() {
   localStorage.setItem("eventData", JSON.stringify(currentEvents));
   buildDropdown();
 }
-//  {
-//  event: "ComicCon",
-//  city: "New York",
-//  state: "New York",
-//  attendance: 240000,
-//  date: "06/01/2017",
-//},
+function displayData(events) {
+  let template = document.getElementById("eventData-template");
+  let eventBody = document.getElementById("eventDataBody");
+  eventBody.innerHTML = "";
+  for (let i = 0; i < events.length; i++) {
+    let curEvent = events[i];
+    let eventRow = document.importNode(template.content, true);
+    eventRow.querySelector("[data-event]").textContent = curEvent.event;
+    eventRow.querySelector("[data-city]").textContent = curEvent.city;
+    eventRow.querySelector("[data-state]").textContent = curEvent.state;
+    eventRow.querySelector("[data-attendance]").textContent =
+      curEvent.attendance;
+    eventRow.querySelector("[data-date]").textContent = new Date(
+      curEvent.date
+    ).toLocaleDateString();
+    eventBody.appendChild(eventRow);
+  }
+}

@@ -47,6 +47,9 @@ nav {
 .tech-stack {
     font-size: 1.4rem;
 }
+.appimage {
+    max-height: 300px;
+}
 footer {
     font-size: 1.3rem;
     background-color: var(--sm-theme-800);
